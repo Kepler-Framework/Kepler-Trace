@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.kepler</groupId>
+	<artifactId>kepler-trace-collector</artifactId>
+	<version>0.0.6-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<maven.project.compile.version>1.7</maven.project.compile.version>
+		<maven.project.kepler.version>0.0.6-SNAPSHOT</maven.project.kepler.version>
+		<maven.project.spring.version>3.2.4.RELEASE</maven.project.spring.version>
+		<maven.project.build.sourceEncoding>UTF-8</maven.project.build.sourceEncoding>
+		<maven.project.jackson.version>2.4.2</maven.project.jackson.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.kepler</groupId>
+			<artifactId>kepler-all</artifactId>
+			<version>${maven.project.kepler.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<modules>
+		<module>kepler-trace-collector-interface</module>
+		<module>kepler-trace-collector-service</module>
+	</modules>
+</project>
