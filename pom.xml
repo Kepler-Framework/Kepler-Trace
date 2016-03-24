@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kepler</groupId>
-	<artifactId>kepler-trace-collector</artifactId>
+	<artifactId>kepler-trace-parent</artifactId>
 	<version>0.0.6-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -30,6 +30,7 @@
 	</dependencies>
 
 	<modules>
+		<module>kepler-trace</module>
 		<module>kepler-trace-collector-interface</module>
 		<module>kepler-trace-collector-service</module>
 	</modules>
