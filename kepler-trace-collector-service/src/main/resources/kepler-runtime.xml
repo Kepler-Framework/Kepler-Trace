@@ -25,7 +25,7 @@
 	<import resource="classpath:kepler-serial-snappy.xml" />
 
 	<bean id="mongo" class="com.kepler.trace.collector.util.MongoClientFactory">
-		<property name="host" value="${mongo.db}" />
+		<property name="host" value="${mongo.host}" />
 		<property name="port" value="${mongo.port}" />
 		<property name="db" value="${mongo.db}" />
 	</bean>

@@ -1,6 +1,7 @@
 package com.kepler.trace.collector.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -89,7 +90,7 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		document.put("transferTime", traceInfo.getTransferTime());
 		document.put("waiting", traceInfo.getWaiting());
 		document.put("elapse", traceInfo.getElapse());
-		document.put("startTime", traceInfo.getStartTime());
+		document.put("startTime", new Date(traceInfo.getStartTime()));
 		document.put("receivedTime", traceInfo.getReceivedTime());
 		List params = new ArrayList();
 		for (Object param : traceInfo.getRequest()) {
