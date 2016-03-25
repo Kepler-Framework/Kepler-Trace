@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+    http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<import resource="classpath:kepler-serial-snappy.xml" />
+
+	<bean id="kepler.trace.configRewriter" class="com.kepler.trace.ConfigRewriter" />
+
+	<bean id="kepler.trace.traceEnabledServices" class="com.kepler.trace.impl.DefaultTraceEnabledServices" />
+
+	<bean id="kepler.trace.objectPrinter" class="com.kepler.trace.impl.JsonObjectPrinter" />
+
+	<bean id="kepler.trace.serverHeaderProcessor" class="com.kepler.trace.ServerTraceProcessor" />
+
+	<bean id="kepler.trace.defaultTrace" class="com.kepler.trace.impl.DefaultTrace">
+		<constructor-arg ref="kepler.trace.traceEnabledServices" />
+		<constructor-arg ref="kepler.service.exported.services" />
+		<constructor-arg ref="kepler.trace.objectPrinter" />
+		<constructor-arg ref="kepler.trace.collector" />
+	</bean>
+	
+	<bean id="kepler.trace.collector" class="com.kepler.trace.impl.DefaultTraceCollector" init-method="init">
+		<constructor-arg ref="kepler.trace.transferService" />
+	</bean>
+
+	<bean id="kepler.trace.transferService" class="com.kepler.service.imported.ImportedServiceFactory" parent="kepler.service.imported.abstract">
+		<constructor-arg index="0" value="com.kepler.trace.collector.TraceTransferService" />
+	</bean>
+	
+
+</beans>
