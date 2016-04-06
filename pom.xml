@@ -31,6 +31,6 @@
 
 	<modules>
 		<module>kepler-trace</module>
-		<module>kepler-trace-collector-interface</module>
+		<module>kepler-trace-interface</module>
 	</modules>
 </project>
