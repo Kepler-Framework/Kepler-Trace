@@ -22,7 +22,7 @@
 		<constructor-arg ref="kepler.trace.collector" />
 	</bean>
 	
-	<bean id="kepler.trace.collector" class="com.kepler.trace.impl.DefaultTraceCollector" init-method="init">
+	<bean id="kepler.trace.collector" class="com.kepler.trace.impl.DefaultTraceCollector" init-method="init" destroy-method="destroy">
 		<constructor-arg ref="kepler.trace.transferService" />
 	</bean>
 

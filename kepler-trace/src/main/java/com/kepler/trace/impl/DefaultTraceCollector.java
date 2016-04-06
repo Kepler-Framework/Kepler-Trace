@@ -1,8 +1,6 @@
 package com.kepler.trace.impl;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -28,14 +26,22 @@ public class DefaultTraceCollector implements TraceCollector {
 
 	private final TraceTransferService traceTransferService;
 
-	private final ExecutorService transferTaskExecutor = Executors.newSingleThreadExecutor();
+	private volatile boolean shutdown = false;
+
+	private Thread transferTaskThread;
 
 	public DefaultTraceCollector(TraceTransferService traceTransferService) {
 		this.traceTransferService = traceTransferService;
 	}
 
 	public void init() {
-		this.transferTaskExecutor.execute(new TransferTask());
+		this.transferTaskThread = new Thread(new TransferTask());
+		this.transferTaskThread.start();
+	}
+	
+	public void destroy() {
+		this.shutdown  = true;
+		this.transferTaskThread.interrupt();
 	}
 	
 	@Config(value="com.kepler.trace.tracecollector.trace_timeout")
@@ -49,20 +55,21 @@ public class DefaultTraceCollector implements TraceCollector {
 
 		@Override
 		public void run() {
-			while (true) {
+			while (!shutdown) {
 				try {
 					transferingTraceInfos.add(queue.take());
 					queue.drainTo(transferingTraceInfos);
 					LOGGER.info("Transfering "  + transferingTraceInfos.size() + " traceInfo.");
 					traceTransferService.transferTraceInfos(new TraceInfos(transferingTraceInfos));
 				} catch (InterruptedException e) {
-					return;
+					break;
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				} finally {
 					transferingTraceInfos.clear();
 				}
 			}
+			LOGGER.info("Shutting down transfering trace task.");
 		}
 
 	}
