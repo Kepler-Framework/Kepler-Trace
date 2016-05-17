@@ -16,6 +16,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.StringUtils;
 
 import com.kepler.config.ConfigAware;
 import com.kepler.config.PropertiesUtils;
@@ -62,22 +63,28 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 
 	@Override
 	public void trace(Request request, Response response, String local, String remote, long waiting, long elapse, long receivedTime) {
-		TraceInfo traceInfo = TraceInfoBuilder.build(request, response, local, remote, waiting, elapse, receivedTime);
 		if (!PropertiesUtils.get(Trace.ENABLED_KEY, Trace.ENABLED_DEF)) {
 			return;
 		}
-		// 是否启用Trace，启动则放入收集器收集		
-		this.traceCollector.put(traceInfo);
 		
 		if (null == this.tracers) {
 			DefaultTrace.LOGGER.warn("Traces hasn't been initialized");
 			return;
 		}
+		
+		TraceInfo traceInfo = TraceInfoBuilder.build(request, response, local, remote, waiting, elapse, receivedTime);
+		
+		if (!(request.headers() != null && StringUtils.isEmpty(request.headers().get(Trace.TRACE)))) {
+			// 是否启用Trace，启动则放入收集器收集		
+			this.traceCollector.put(traceInfo);
+		}
+		
 		ServiceAndMethod method = new ServiceAndMethod(request.service(), request.method(), request.types());
 		TraceConfig logConfig = this.tracers.getLogConfig(method);
 		if (null == logConfig || null == logConfig.getExpression()) {
 			return;
 		}
+		
 		try {
 			// 条件match才打日志
 			if (this.traceEnabled(logConfig, new ArgWrapper(waiting, elapse, response.valid() ? response.response() : response.throwable(), request.args()))) {

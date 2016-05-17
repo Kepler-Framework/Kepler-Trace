@@ -1,5 +1,7 @@
 package com.kepler.trace;
 
+import org.springframework.util.StringUtils;
+
 import com.kepler.config.PropertiesUtils;
 import com.kepler.header.Headers;
 import com.kepler.protocol.Request;
@@ -32,7 +34,7 @@ public class ServerTraceProcessor implements RequestProcessor {
 		span.setTrace(headers.get(Trace.TRACE));
 		span.setSpan(headers.get(Trace.SPAN));
 		span.setParentSpan(headers.get(Trace.PARENT_SPAN));
-		span.setStartTime(Long.parseLong(headers.get(Trace.START_TIME)));
+		span.setStartTime(StringUtils.isEmpty(headers.get(Trace.START_TIME)) ? 0 : Long.parseLong(headers.get(Trace.START_TIME)));
 		return span;
 	}
 
