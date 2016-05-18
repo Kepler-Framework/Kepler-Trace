@@ -11,7 +11,7 @@ import com.kepler.trace.collector.TraceInfo;
 
 public class TraceInfoBuilder {
 
-	private static final int MAX_STACKTRACE_LINE = PropertiesUtils.get(TraceInfoBuilder.class.getSimpleName() + ".max_stacktrace_line", 5);
+	private static final int MAX_STACKTRACE_LINE = PropertiesUtils.get(TraceInfoBuilder.class.getSimpleName() + ".max_stacktrace_line", 20);
 
 	public static TraceInfo build(Request request, Response response, String local, String remote, long waiting,
 			long elapse, long receivedTime) {
