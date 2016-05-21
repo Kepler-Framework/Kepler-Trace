@@ -10,6 +10,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kepler.trace.collector.TraceInfo;
 import com.kepler.trace.collector.TraceInfos;
 import com.kepler.trace.collector.TraceTransferService;
@@ -28,6 +29,8 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	static final String COLLECTION_NAME = "trace";
 
 	private Documents documentsHolder = new Documents();
+	
+	private ObjectMapper om = new ObjectMapper();
 
 	static class Documents extends ThreadLocal<List<Document>> {
 
@@ -96,8 +99,8 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		for (Object param : traceInfo.getRequest()) {
 			params.add(param == null ? null :param.getClass().cast(param));
 		}
-		document.put("request", params);
-		document.put("response", traceInfo.getResponse() == null ? null : traceInfo.getResponse().getClass().cast(traceInfo.getResponse()));
+		document.put("request", params == null ? "" : om.writerWithDefaultPrettyPrinter().writeValueAsString(params));
+		document.put("response", traceInfo.getResponse() == null ? "" : om.writerWithDefaultPrettyPrinter().writeValueAsString(traceInfo.getResponse()));
 		document.put("throwable", traceInfo.getThrowable());
 		return document;
 	}
