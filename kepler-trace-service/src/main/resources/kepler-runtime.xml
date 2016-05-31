@@ -11,12 +11,18 @@
 
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="locations">
 			<list>
-				<value>classpath:/srv.properties</value>
+				<value>classpath*:srv.properties</value>
+				<value>file:/opt/conf/trace/srv.properties</value>
 			</list>
 		</property>
+		
 	</bean>
+	
 
 	<context:annotation-config />
 
@@ -28,6 +34,8 @@
 		<property name="host" value="${mongo.host}" />
 		<property name="port" value="${mongo.port}" />
 		<property name="db" value="${mongo.db}" />
+		<property name="username" value="${mongo.username}" />
+		<property name="password" value="${mongo.password}" />
 	</bean>
 
 	<bean class="com.kepler.trace.collector.impl.TraceTransferServiceImpl" />
