@@ -2,7 +2,10 @@ package com.kepler.trace;
 
 import java.util.StringTokenizer;
 
+import org.springframework.util.StringUtils;
+
 import com.kepler.config.PropertiesUtils;
+import com.kepler.header.Headers;
 import com.kepler.org.apache.commons.lang.SystemUtils;
 import com.kepler.org.apache.commons.lang.exception.ExceptionUtils;
 import com.kepler.protocol.Request;
@@ -15,6 +18,7 @@ public class TraceInfoBuilder {
 
 	public static TraceInfo build(Request request, Response response, String local, String remote, long waiting,
 			long elapse, long receivedTime) {
+		Headers headers = request.headers();
 		TraceInfo traceInfo = new TraceInfo();
 		traceInfo.setElapse(elapse);
 		traceInfo.setWaiting(waiting);
@@ -23,10 +27,10 @@ public class TraceInfoBuilder {
 		traceInfo.setRequest(request.args());
 		traceInfo.setResponse(response.valid() ? response.response() : null);
 		traceInfo.setThrowable(!response.valid() ? getException(response.throwable(), MAX_STACKTRACE_LINE) : null);
-		traceInfo.setStartTime(SpanContext.get().getStartTime());
-		traceInfo.setParentSpan(SpanContext.get().getParentSpan());
-		traceInfo.setSpan(SpanContext.get().getSpan());
-		traceInfo.setTrace(SpanContext.get().getTrace());
+		traceInfo.setStartTime(headers == null ? 0 : StringUtils.isEmpty(headers.get(Trace.START_TIME + "_orig")) ? 0 : Long.parseLong(headers.get(Trace.START_TIME)));
+		traceInfo.setParentSpan(headers == null ? "" : headers.get(Trace.PARENT_SPAN + "_orig"));
+		traceInfo.setSpan(headers == null ? "" : headers.get(Trace.SPAN + "_orig"));
+		traceInfo.setTrace(headers == null ? "" : headers.get(Trace.TRACE + "_orig"));
 		traceInfo.setService(request.service().toString());
 		traceInfo.setMethod(request.method());
 		traceInfo.setReceivedTime(receivedTime);

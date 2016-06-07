@@ -158,7 +158,7 @@ public class TraceInfo implements Serializable {
 	}
 
 	public void setTransferTime(long transferTime) {
-		this.transferTime = this.receivedTime - this.startTime;
+		this.transferTime = Math.max(this.receivedTime - this.startTime, 0);
 	}
 
 }

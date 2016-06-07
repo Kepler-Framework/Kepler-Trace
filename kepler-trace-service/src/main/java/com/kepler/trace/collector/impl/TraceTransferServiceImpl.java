@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,7 +63,9 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	private List<Document> prepareDataForBatchInsert(List<TraceInfo> traceInfos, List<Document> documents) {
 		for (TraceInfo traceInfo : traceInfos) {
 			try {
-				documents.add(createDocument(traceInfo));
+				if (!StringUtils.isEmpty(traceInfo.getTrace())) {
+					documents.add(createDocument(traceInfo));
+				}
 			} catch (JsonProcessingException e) {
 				LOGGER.error("Fail deserializing document: " + traceInfo);
 			}
