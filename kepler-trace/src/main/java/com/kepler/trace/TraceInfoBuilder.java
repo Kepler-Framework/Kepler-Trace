@@ -27,7 +27,7 @@ public class TraceInfoBuilder {
 		traceInfo.setRequest(request.args());
 		traceInfo.setResponse(response.valid() ? response.response() : null);
 		traceInfo.setThrowable(!response.valid() ? getException(response.throwable(), MAX_STACKTRACE_LINE) : null);
-		traceInfo.setStartTime(headers == null ? 0 : StringUtils.isEmpty(headers.get(Trace.START_TIME + "_orig")) ? 0 : Long.parseLong(headers.get(Trace.START_TIME)));
+		traceInfo.setStartTime(headers == null ? 0 : StringUtils.isEmpty(headers.get(Trace.START_TIME + "_orig")) ? 0 : Long.parseLong(headers.get(Trace.START_TIME + "_orig")));
 		traceInfo.setParentSpan(headers == null ? "" : headers.get(Trace.PARENT_SPAN + "_orig"));
 		traceInfo.setSpan(headers == null ? "" : headers.get(Trace.SPAN + "_orig"));
 		traceInfo.setTrace(headers == null ? "" : headers.get(Trace.TRACE + "_orig"));
