@@ -1,5 +1,6 @@
 package com.kepler.trace.collector.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.xerial.snappy.Snappy;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,9 +104,14 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		for (Object param : traceInfo.getRequest()) {
 			params.add(param == null ? null :param.getClass().cast(param));
 		}
-		document.put("request", params == null ? "" : om.writerWithDefaultPrettyPrinter().writeValueAsString(params));
-		document.put("response", traceInfo.getResponse() == null ? "" : om.writerWithDefaultPrettyPrinter().writeValueAsString(traceInfo.getResponse()));
+		try {
+			document.put("request", params == null ? "" : new String(Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(params))));
+			document.put("response", traceInfo.getResponse() == null ? "" : new String(Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(traceInfo.getResponse())), "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		document.put("throwable", traceInfo.getThrowable());
+		document.put("useSnappy", true);
 		return document;
 	}
 
