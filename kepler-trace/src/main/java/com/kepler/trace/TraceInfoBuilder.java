@@ -1,5 +1,6 @@
 package com.kepler.trace;
 
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import org.springframework.util.StringUtils;
@@ -27,7 +28,7 @@ public class TraceInfoBuilder {
 		traceInfo.setRequest(request.args());
 		traceInfo.setResponse(response.valid() ? response.response() : null);
 		traceInfo.setThrowable(!response.valid() ? getException(response.throwable(), MAX_STACKTRACE_LINE) : null);
-		traceInfo.setStartTime(headers == null ? 0 : StringUtils.isEmpty(headers.get(Trace.START_TIME + "_orig")) ? 0 : Long.parseLong(headers.get(Trace.START_TIME + "_orig")));
+		traceInfo.setStartTime(headers == null ? 0 : StringUtils.isEmpty(headers.get(Trace.START_TIME + "_orig")) ? new Date().getTime() : Long.parseLong(headers.get(Trace.START_TIME + "_orig")));
 		traceInfo.setParentSpan(headers == null ? "" : headers.get(Trace.PARENT_SPAN + "_orig"));
 		traceInfo.setSpan(headers == null ? "" : headers.get(Trace.SPAN + "_orig"));
 		traceInfo.setTrace(headers == null ? "" : headers.get(Trace.TRACE + "_orig"));

@@ -105,8 +105,8 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 			params.add(param == null ? null :param.getClass().cast(param));
 		}
 		try {
-			document.put("request", params == null ? "" : new String(Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(params))));
-			document.put("response", traceInfo.getResponse() == null ? "" : new String(Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(traceInfo.getResponse())), "UTF-8"));
+			document.put("request", params == null ? null : Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(params)));
+			document.put("response", traceInfo.getResponse() == null ? null : Snappy.compress(om.writerWithDefaultPrettyPrinter().writeValueAsString(traceInfo.getResponse())));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
