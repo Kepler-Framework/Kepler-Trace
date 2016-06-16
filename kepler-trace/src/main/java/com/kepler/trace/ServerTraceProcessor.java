@@ -21,8 +21,8 @@ public class ServerTraceProcessor implements RequestProcessor {
 		Headers headers = request.headers();
 		if (headers != null) {
 			backupHeader(headers);
-			headers.put(Trace.TRACE_TO_COVER, headers.get(Trace.TRACE));
-			headers.put(Trace.PARENT_SPAN, headers.get(Trace.SPAN));
+			headers.put(Trace.TRACE_COVER, headers.get(Trace.TRACE));
+			headers.put(Trace.SPAN_PARENT, headers.get(Trace.SPAN));
 		}
 		return request;
 	}
@@ -30,7 +30,7 @@ public class ServerTraceProcessor implements RequestProcessor {
 	private void backupHeader(Headers headers) {
 		headers.put(Trace.TRACE + "_orig",  headers.get(Trace.TRACE));
 		headers.put(Trace.SPAN + "_orig",  headers.get(Trace.SPAN));
-		headers.put(Trace.PARENT_SPAN + "_orig", headers.get(Trace.PARENT_SPAN));
+		headers.put(Trace.SPAN_PARENT + "_orig", headers.get(Trace.SPAN_PARENT));
 		headers.put(Trace.START_TIME + "_orig", StringUtils.isEmpty(headers.get(Trace.START_TIME)) ? "0" : headers.get(Trace.START_TIME));
 	}
 
