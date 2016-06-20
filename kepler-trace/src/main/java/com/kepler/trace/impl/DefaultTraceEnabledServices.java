@@ -3,6 +3,7 @@ package com.kepler.trace.impl;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.aop.framework.Advised;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -24,7 +25,8 @@ public class DefaultTraceEnabledServices implements BeanPostProcessor, TraceEnab
 
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		TraceLogger annotation = AnnotationUtils.findAnnotation(bean.getClass(), TraceLogger.class);
+		Class<?> beanClass = Advised.class.isAssignableFrom(bean.getClass()) ? Advised.class.cast(bean).getTargetClass() : bean.getClass();
+		TraceLogger annotation = AnnotationUtils.findAnnotation(beanClass, TraceLogger.class);
 		if (null != annotation) {
 			this.traceLogEnabledServices.add(bean);
 		}
