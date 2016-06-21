@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.Advised;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -152,13 +153,16 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 	}
 
 	private void addToTracers(Tracers.Builder tracersBuilder, Service exportedService, Object exportedServiceInstance) {
-		TraceLogger loggerAnnotation = AnnotationUtils.findAnnotation(exportedServiceInstance.getClass(), TraceLogger.class);
-		TraceConfig config = new TraceConfig();
-		config.setLogger(LogFactory.getLog((String) this.annotationPropertyResolver.resolve(loggerAnnotation.logger())));
-		tracersBuilder.addServiceTraceConfig(exportedService, config);
-		Method[] methods = exportedServiceInstance.getClass().getDeclaredMethods();
-		for (Method method : methods) {
-			this.addToTracers(tracersBuilder, exportedService, method);
+		Class<?> beanClass = Advised.class.isAssignableFrom(exportedServiceInstance.getClass()) ? Advised.class.cast(exportedServiceInstance).getTargetClass() : exportedServiceInstance.getClass();
+		TraceLogger loggerAnnotation = AnnotationUtils.findAnnotation(beanClass, TraceLogger.class);
+		if (loggerAnnotation != null) {
+			TraceConfig config = new TraceConfig();
+			config.setLogger(LogFactory.getLog((String) this.annotationPropertyResolver.resolve(loggerAnnotation.logger())));
+			tracersBuilder.addServiceTraceConfig(exportedService, config);
+			Method[] methods = beanClass.getDeclaredMethods();
+			for (Method method : methods) {
+				this.addToTracers(tracersBuilder, exportedService, method);
+			}
 		}
 	}
 
