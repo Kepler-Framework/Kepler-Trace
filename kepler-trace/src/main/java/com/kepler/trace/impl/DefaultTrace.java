@@ -75,7 +75,7 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 		
 		TraceInfo traceInfo = TraceInfoBuilder.build(request, response, local, remote, waiting, elapse, receivedTime);
 		
-		if (request.headers() != null && !StringUtils.isEmpty(request.headers().get(Trace.TRACE))) {
+		if (request.headers() != null && traceInfo != null && !StringUtils.isEmpty(traceInfo.getTrace()) ) {
 			// 是否启用Trace，启动则放入收集器收集		
 			this.traceCollector.put(traceInfo);
 		}
