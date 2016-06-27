@@ -17,7 +17,7 @@
 		<property name="locations">
 			<list>
 				<value>classpath*:srv.properties</value>
-				<value>file:/opt/conf/trace/srv.properties</value>
+				<value>file:${confPath}/srv.properties</value>
 			</list>
 		</property>
 		
