@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.kepler.config.PropertiesUtils;
 import com.kepler.trace.ObjectPrinter;
 
 /**
@@ -17,6 +18,8 @@ import com.kepler.trace.ObjectPrinter;
 public class JsonObjectPrinter implements ObjectPrinter {
 
 	private final static Log LOGGER = LogFactory.getLog(JsonObjectPrinter.class);
+	
+	private final static boolean prettyPrint = PropertiesUtils.get(JsonObjectPrinter.class.getSimpleName() + ".prettyPrint", false);
 
 	private final ConcurrentHashMap<Class<?>, ObjectWriter> writerCache = new ConcurrentHashMap<>();
 
@@ -26,7 +29,7 @@ public class JsonObjectPrinter implements ObjectPrinter {
 		this.objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		this.objectMapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
 		this.objectMapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, true);
-		this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		this.objectMapper.configure(SerializationFeature.INDENT_OUTPUT, prettyPrint);
 	}
 
 	@Override

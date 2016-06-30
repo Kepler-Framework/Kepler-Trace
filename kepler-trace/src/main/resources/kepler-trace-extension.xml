@@ -14,6 +14,8 @@
 	<bean id="kepler.trace.objectPrinter" class="com.kepler.trace.impl.JsonObjectPrinter" />
 
 	<bean id="kepler.trace.serverHeaderProcessor" class="com.kepler.trace.ServerTraceProcessor" />
+	
+	<bean id="kepler.trace.log4jProcessor" class="com.kepler.trace.Log4jProcessor" />
 
 	<bean id="kepler.trace.defaultTrace" class="com.kepler.trace.impl.DefaultTrace">
 		<constructor-arg ref="kepler.trace.traceEnabledServices" />

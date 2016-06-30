@@ -88,7 +88,7 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 		
 		try {
 			// 条件match才打日志
-			if (this.traceEnabled(logConfig, new ArgWrapper(waiting, elapse, response.valid() ? response.response() : response.throwable(), request.args()))) {
+			if (!response.valid() || this.traceEnabled(logConfig, new ArgWrapper(waiting, elapse, response.valid() ? response.response() : response.throwable(), request.args()))) {
 				logConfig.getLogger().info(traceMessage(traceInfo));
 			}
 		} catch (EvaluationException e) {
