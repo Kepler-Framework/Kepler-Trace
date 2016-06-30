@@ -29,7 +29,9 @@ public class Log4jProcessor implements RequestProcessor {
 			Headers headers = request.headers();
 			if (headers != null) {
 				String trace = headers.get(Trace.TRACE, "");
-				MDC.put(Trace.TRACE, trace);
+				if (trace != null) {
+					MDC.put(Trace.TRACE, trace);
+				}
 			}
 		}
 		return request;
