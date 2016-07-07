@@ -59,7 +59,7 @@ public class DefaultTraceCollector implements TraceCollector {
 				try {
 					transferingTraceInfos.add(queue.take());
 					queue.drainTo(transferingTraceInfos);
-					LOGGER.info("Transfering "  + transferingTraceInfos.size() + " traceInfo.");
+					LOGGER.debug("Transfering "  + transferingTraceInfos.size() + " traceInfo.");
 					traceTransferService.transferTraceInfos(new TraceInfos(transferingTraceInfos));
 				} catch (InterruptedException e) {
 					break;

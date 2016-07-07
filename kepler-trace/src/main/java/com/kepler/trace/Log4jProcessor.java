@@ -3,7 +3,6 @@ package com.kepler.trace;
 import org.apache.log4j.MDC;
 
 import com.kepler.config.PropertiesUtils;
-import com.kepler.header.Headers;
 import com.kepler.protocol.Request;
 import com.kepler.protocol.RequestProcessor;
 
@@ -26,12 +25,9 @@ public class Log4jProcessor implements RequestProcessor {
 	@Override
 	public Request process(Request request) {
 		if (log4jSupported) {
-			Headers headers = request.headers();
-			if (headers != null) {
-				String trace = headers.get(Trace.TRACE, "");
-				if (trace != null) {
-					MDC.put(Trace.TRACE, trace);
-				}
+			String trace = request.get(Trace.TRACE, "");
+			if (trace != null) {
+				MDC.put(Trace.TRACE, trace);
 			}
 		}
 		return request;
