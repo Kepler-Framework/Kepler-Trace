@@ -20,6 +20,7 @@ import com.kepler.trace.collector.TraceTransferService;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.InsertManyOptions;
 
 @com.kepler.annotation.Autowired
 public class TraceTransferServiceImpl implements TraceTransferService {
@@ -34,6 +35,8 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	private Documents documentsHolder = new Documents();
 	
 	private ObjectMapper om = new ObjectMapper();
+	
+	private InsertManyOptions options = new InsertManyOptions().ordered(false);
 
 	static class Documents extends ThreadLocal<List<Document>> {
 
@@ -47,7 +50,7 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		}
 
 	}
-
+	
 	@Override
 	public void transferTraceInfos(TraceInfos traceInfos) {
 		if (traceInfos == null) {
@@ -76,7 +79,7 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	}
 
 	private void insertToDB(List<Document> documents) {
-		traceCollection().insertMany(documents);
+		traceCollection().insertMany(documents, options);
 	}
 
 	private Document createDocument(TraceInfo traceInfo) throws JsonProcessingException {

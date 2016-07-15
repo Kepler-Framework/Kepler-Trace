@@ -1,6 +1,8 @@
 package com.kepler.trace.collector.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.FactoryBean;
 
@@ -28,7 +30,11 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 
 	@Override
 	public MongoDatabase getObject() throws Exception {
-		ServerAddress serverAddress = new ServerAddress(host, port);
+		String[] hosts = StringUtils.split(host, ",");
+		List<ServerAddress> serverAddress = new ArrayList<>();
+		for (String h : hosts) {
+			serverAddress.add(new ServerAddress(h, port));
+		}
 		if (useAuthentication()) {
 			MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
 			client = new MongoClient(serverAddress, Arrays.asList(credential));
