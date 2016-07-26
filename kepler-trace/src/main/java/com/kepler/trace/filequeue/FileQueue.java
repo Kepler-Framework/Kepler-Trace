@@ -68,7 +68,7 @@ public class FileQueue {
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
-	public FileQueue(String dir) {
+	public FileQueue(String dir) throws IOException {
 		this.baseDir = dir;
 		this.dataDir = baseDir + File.separator + "data";
 		this.commitDir = baseDir + File.separator + "commit";
@@ -89,6 +89,7 @@ public class FileQueue {
 				try {
 					if (!FileQueue.this.shutdown) {
 						FileQueue.this.commit();
+						FileQueue.this.clean();
 					}
 				} catch (Exception e) {
 					LOGGER.error("Fail flush to disk.", e);
@@ -96,21 +97,6 @@ public class FileQueue {
 			}
 
 		}, 20, 20, TimeUnit.MILLISECONDS);
-	
-		executor.scheduleAtFixedRate(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					if (!FileQueue.this.shutdown) {
-						FileQueue.this.clean();
-					}
-				} catch (Exception e) {
-					LOGGER.error("Fail clean files.", e);
-				}
-			}
-
-		}, 1000, 1000, TimeUnit.MILLISECONDS);
 		
 	}
 
