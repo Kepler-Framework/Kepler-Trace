@@ -68,7 +68,7 @@ public class FileQueue {
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
-	public FileQueue(String dir) throws IOException {
+	public FileQueue(String dir) {
 		this.baseDir = dir;
 		this.dataDir = baseDir + File.separator + "data";
 		this.commitDir = baseDir + File.separator + "commit";
