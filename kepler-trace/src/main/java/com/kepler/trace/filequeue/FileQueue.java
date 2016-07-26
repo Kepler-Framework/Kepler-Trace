@@ -3,8 +3,11 @@ package com.kepler.trace.filequeue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -68,6 +71,10 @@ public class FileQueue {
 
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	
+	private RandomAccessFile lockFile;
+	
+	private FileLock lock;
+	
 	public FileQueue(String dir) {
 		this.baseDir = dir;
 		this.dataDir = baseDir + File.separator + "data";
@@ -77,6 +84,7 @@ public class FileQueue {
 	public void load() throws IOException {
 		Files.createDirectories(Paths.get(dataDir));
 		Files.createDirectories(Paths.get(commitDir));
+		checkLock();
 		this.indexFile = new IndexFile(new File(this.commitDir, "commit"));
 		loadData();
 		loadCommit();
@@ -100,11 +108,22 @@ public class FileQueue {
 		
 	}
 
-	public void destroy() throws InterruptedException {
+	private void checkLock() throws IOException {
+		lockFile = new RandomAccessFile(new File(baseDir, ".lock"), "rw");
+		FileChannel channel = lockFile.getChannel();
+		lock = channel.tryLock();
+		if (lock == null) {
+			throw new IOException("File Queue is already used by another proccess.");
+		}
+	}
+
+	public void destroy() throws InterruptedException, IOException {
 		this.shutdown = true;
 		this.executor.shutdown();
 		this.executor.awaitTermination(500, TimeUnit.MILLISECONDS);
 		commit();
+		this.lock.release();
+		this.lockFile.close();
 	}
 
 	private void clean() {
