@@ -80,12 +80,19 @@ public class DefaultTraceCollector implements TraceCollector {
 				} catch (InterruptedException e) {
 					break;
 				} catch (Exception e) {
+					logTraceInfo();
 					LOGGER.error(e.getMessage(), e);
 				} finally {
 					transferingTraceInfos.clear();
 				}
 			}
 			LOGGER.info("Shutting down transfering trace task.");
+		}
+
+		private void logTraceInfo() {
+			for (TraceInfo traceInfo : transferingTraceInfos) {
+				LOGGER.error("Error transfering service " + traceInfo.getService() + " method " + traceInfo.getMethod());
+			}
 		}
 
 	}
