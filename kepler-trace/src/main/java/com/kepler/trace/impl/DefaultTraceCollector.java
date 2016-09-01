@@ -79,7 +79,7 @@ public class DefaultTraceCollector implements TraceCollector {
 					traceTransferService.transferTraceInfos(new TraceInfos(transferingTraceInfos));
 				} catch (InterruptedException e) {
 					break;
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					logTraceInfo();
 					LOGGER.error(e.getMessage(), e);
 				} finally {
