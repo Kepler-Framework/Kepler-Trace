@@ -81,7 +81,6 @@ public class DefaultTraceCollector implements TraceCollector {
 					break;
 				} catch (Throwable e) {
 					logTraceInfo();
-					LOGGER.error(e.getMessage(), e);
 				} finally {
 					transferingTraceInfos.clear();
 				}
@@ -91,7 +90,7 @@ public class DefaultTraceCollector implements TraceCollector {
 
 		private void logTraceInfo() {
 			for (TraceInfo traceInfo : transferingTraceInfos) {
-				LOGGER.error("Error transfering service " + traceInfo.getService() + " method " + traceInfo.getMethod());
+				LOGGER.warn("Error transfering service " + traceInfo.getService() + " method " + traceInfo.getMethod());
 			}
 		}
 
@@ -119,10 +118,12 @@ public class DefaultTraceCollector implements TraceCollector {
 				try {
 					TraceInfo traceInfo = fileQueue.poll(reader);
 					DefaultTraceCollector.this.traceTransferService.transferTraceInfos(new TraceInfos(Arrays.asList(traceInfo)));
-				} catch (DecodeException e) {
-					LOGGER.error(e.getMessage(), e);
 				} catch (InterruptedException e) {
 					break;
+				} catch (DecodeException e) {
+					LOGGER.warn(e.getMessage(), e);
+				} catch (Throwable e) {
+					LOGGER.warn(e.getMessage(), e);
 				}
 			}
 		}
