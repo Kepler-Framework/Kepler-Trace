@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.kepler</groupId>
 	<artifactId>kepler-trace-parent</artifactId>
-	<version>0.0.7-SNAPSHOT</version>
+	<version>0.0.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<maven.project.compile.version>1.7</maven.project.compile.version>
-		<maven.project.kepler.version>0.0.6-SNAPSHOT</maven.project.kepler.version>
+		<maven.project.kepler.version>0.0.8-SNAPSHOT</maven.project.kepler.version>
 		<maven.project.spring.version>3.2.4.RELEASE</maven.project.spring.version>
 		<maven.project.build.sourceEncoding>UTF-8</maven.project.build.sourceEncoding>
 		<maven.project.jackson.version>2.4.2</maven.project.jackson.version>
@@ -32,5 +32,7 @@
 	<modules>
 		<module>kepler-trace</module>
 		<module>kepler-trace-interface</module>
-	</modules>
+    </modules>
+
+
 </project>

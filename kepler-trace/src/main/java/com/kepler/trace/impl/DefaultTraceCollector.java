@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kepler.annotation.Config;
 import com.kepler.config.PropertiesUtils;
 import com.kepler.trace.TraceCollector;
@@ -40,6 +41,10 @@ public class DefaultTraceCollector implements TraceCollector {
 	private Thread transferTaskService = new Thread(new TransferTask());
 	
 	private Thread recoverService = new Thread(new RecoverService());
+	
+	{
+		objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+	}
 
 	public DefaultTraceCollector(TraceTransferService traceTransferService) {
 		this.traceTransferService = traceTransferService;
