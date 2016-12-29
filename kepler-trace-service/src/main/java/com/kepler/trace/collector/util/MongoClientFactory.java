@@ -8,6 +8,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 import com.kepler.org.apache.commons.lang.StringUtils;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
@@ -35,12 +36,14 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 		for (String h : hosts) {
 			serverAddress.add(new ServerAddress(h, port));
 		}
+		MongoClientOptions clientOptions = MongoClientOptions.builder().connectionsPerHost(32).build();
 		if (useAuthentication()) {
 			MongoCredential credential = MongoCredential.createCredential(username, db, password.toCharArray());
-			client = new MongoClient(serverAddress, Arrays.asList(credential));
+			client = new MongoClient(serverAddress, Arrays.asList(credential), clientOptions);
 		} else {
-			client = new MongoClient(serverAddress);
+			client = new MongoClient(serverAddress, clientOptions);
 		}
+		
 		return client.getDatabase(db);
 	}
 

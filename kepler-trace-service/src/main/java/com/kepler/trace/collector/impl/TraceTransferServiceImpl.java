@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +39,12 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	
 	private InsertManyOptions options = new InsertManyOptions().ordered(false);
 
+	private AtomicLong counter = new AtomicLong(0);
+	
+	private final int SAMPLE_RATE = Integer.parseInt(System.getProperty("sampleRate", "1000"));
+
+	private MongoCollection<Document> dbCollection;
+	
 	static class Documents extends ThreadLocal<List<Document>> {
 
 		@Override
@@ -51,15 +58,35 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 
 	}
 	
+	public void init() {
+		dbCollection = this.db.getCollection(COLLECTION_NAME).withWriteConcern(WriteConcern.W1);
+	}
+	
 	@Override
 	public void transferTraceInfos(TraceInfos traceInfos) {
 		if (traceInfos == null) {
 			return;
 		}
+		boolean isSample = (counter.getAndIncrement() % SAMPLE_RATE ) == 0;
+		long startTime = 0, endTime = 0;
 		List<Document> documents = documentsHolder.get();
 		try {
 			documents = prepareDataForBatchInsert(traceInfos.getList(), documents);
+			// 统计时长
+			startTime = System.currentTimeMillis();
 			insertToDB(documents);
+			endTime = System.currentTimeMillis();
+			
+			if (isSample || (endTime - startTime) > 50) {
+				StringBuilder msg = new StringBuilder("Cost " + (endTime - startTime) + "ms.");
+				msg.append('[');
+				for (TraceInfo trace : traceInfos.getList()) {
+					msg.append("{trace: ").append(trace.getTrace())
+						.append(", span: ").append(trace.getSpan()).append("},");
+				}
+				msg.append(']');
+				LOGGER.info(msg.toString());
+			}
 		} finally {
 			documents.clear();
 		}
@@ -79,7 +106,7 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 	}
 
 	private void insertToDB(List<Document> documents) {
-		traceCollection().insertMany(documents, options);
+		dbCollection.insertMany(documents, options);
 	}
 
 	private Document createDocument(TraceInfo traceInfo) throws JsonProcessingException {
@@ -116,10 +143,6 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		document.put("throwable", traceInfo.getThrowable());
 		document.put("useSnappy", true);
 		return document;
-	}
-
-	private MongoCollection<Document> traceCollection() {
-		return this.db.getCollection(COLLECTION_NAME).withWriteConcern(WriteConcern.MAJORITY);
 	}
 
 }

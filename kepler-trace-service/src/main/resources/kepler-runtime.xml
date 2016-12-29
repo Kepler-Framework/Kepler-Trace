@@ -38,6 +38,6 @@
 		<property name="password" value="${mongo.password}" />
 	</bean>
 
-	<bean class="com.kepler.trace.collector.impl.TraceTransferServiceImpl" />
+	<bean class="com.kepler.trace.collector.impl.TraceTransferServiceImpl" init-method="init" />
 
 </beans>
