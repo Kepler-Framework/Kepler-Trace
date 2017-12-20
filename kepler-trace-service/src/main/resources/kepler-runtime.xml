@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.0.xsd
     http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
 		<property name="ignoreResourceNotFound" value="true" />
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -20,9 +16,9 @@
 				<value>file:${confPath}/srv.properties</value>
 			</list>
 		</property>
-		
+
 	</bean>
-	
+
 
 	<context:annotation-config />
 
@@ -31,11 +27,10 @@
 	<import resource="classpath:kepler-serial-snappy.xml" />
 
 	<bean id="mongo" class="com.kepler.trace.collector.util.MongoClientFactory">
-		<property name="host" value="${mongo.host}" />
-		<property name="port" value="${mongo.port}" />
-		<property name="db" value="${mongo.db}" />
-		<property name="username" value="${mongo.username}" />
-		<property name="password" value="${mongo.password}" />
+		<property name="db" value="#{T(com.kepler.config.PropertiesUtils).get('com.mongodb.mongoclient.trace.db')}" />
+		<property name="host" value="#{T(com.kepler.config.PropertiesUtils).get('com.mongodb.mongoclient.trace.host')}" />
+		<property name="username" value="#{T(com.kepler.config.PropertiesUtils).get('com.mongodb.mongoclient.trace.username')}" />
+		<property name="password" value="#{T(com.kepler.config.PropertiesUtils).get('com.mongodb.mongoclient.trace.password')}" />
 	</bean>
 
 	<bean class="com.kepler.trace.collector.impl.TraceTransferServiceImpl" init-method="init" />

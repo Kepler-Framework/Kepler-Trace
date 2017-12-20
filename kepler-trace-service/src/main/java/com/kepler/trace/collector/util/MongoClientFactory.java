@@ -17,13 +17,11 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 
 	// 配置项开始
 	private String host;
-	
-	private int port;
-	
+
 	private String username;
-	
+
 	private String password;
-	
+
 	private String db;
 	// 配置项结束
 
@@ -34,7 +32,7 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 		String[] hosts = StringUtils.split(host, ",");
 		List<ServerAddress> serverAddress = new ArrayList<>();
 		for (String h : hosts) {
-			serverAddress.add(new ServerAddress(h, port));
+			serverAddress.add(new ServerAddress(h));
 		}
 		MongoClientOptions clientOptions = MongoClientOptions.builder().connectionsPerHost(32).build();
 		if (useAuthentication()) {
@@ -43,7 +41,7 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 		} else {
 			client = new MongoClient(serverAddress, clientOptions);
 		}
-		
+
 		return client.getDatabase(db);
 	}
 
@@ -71,14 +69,6 @@ public class MongoClientFactory implements FactoryBean<MongoDatabase> {
 
 	public void setHost(String host) {
 		this.host = host;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
 	}
 
 	public String getUsername() {

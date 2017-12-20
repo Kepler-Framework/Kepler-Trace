@@ -96,7 +96,7 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 		for (TraceInfo traceInfo : traceInfos) {
 			try {
 				if (!StringUtils.isEmpty(traceInfo.getTrace())) {
-					documents.add(createDocument(traceInfo));
+					documents.add(this.convertTraceInfo(traceInfo));
 				}
 			} catch (JsonProcessingException e) {
 				LOGGER.error("Fail deserializing document: " + traceInfo);
@@ -107,12 +107,6 @@ public class TraceTransferServiceImpl implements TraceTransferService {
 
 	private void insertToDB(List<Document> documents) {
 		dbCollection.insertMany(documents, options);
-	}
-
-	private Document createDocument(TraceInfo traceInfo) throws JsonProcessingException {
-		Document document = convertTraceInfo(traceInfo);
-		document.put("_id", traceInfo.getSpan());
-		return document;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
