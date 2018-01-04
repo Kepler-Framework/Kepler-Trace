@@ -44,4 +44,8 @@ public class Tracers {
 	public TraceConfig getLogConfig(ServiceAndMethod method) {
 		return this.methodLogConfigs.get(method);
 	}
+
+	public TraceConfig getLogConfig(Service service) {
+		return this.serviceLogConfigs.get(service);
+	}
 }

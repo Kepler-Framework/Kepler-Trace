@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.kepler.generic.reflect.impl.DelegateArgs;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.Advised;
@@ -82,6 +83,17 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 		
 		ServiceAndMethod method = new ServiceAndMethod(request.service(), request.method(), request.types());
 		TraceConfig logConfig = this.tracers.getLogConfig(method);
+		try {
+			if (null == logConfig && DelegateArgs.class.isAssignableFrom(request.types()[0])) {
+				logConfig = this.tracers.getLogConfig(request.service());
+				// 泛化调用只要加了TraceLogger，默认开启日志输出
+				if(logConfig != null) {
+					logConfig.setTraceCondition("true");
+				}
+			}
+		} catch (Exception e) {
+			DefaultTrace.LOGGER.warn("Failed to get log config, message=" + e.getMessage(), e);
+		}
 		if (null == logConfig || null == logConfig.getExpression()) {
 			return;
 		}
