@@ -84,7 +84,7 @@ public class DefaultTrace implements Trace, ApplicationListener<ContextRefreshed
 		ServiceAndMethod method = new ServiceAndMethod(request.service(), request.method(), request.types());
 		TraceConfig logConfig = this.tracers.getLogConfig(method);
 		try {
-			if (null == logConfig && DelegateArgs.class.isAssignableFrom(request.types()[0])) {
+			if (null == logConfig && request.types() != null && request.types().length > 0 && DelegateArgs.class.isAssignableFrom(request.types()[0])) {
 				logConfig = this.tracers.getLogConfig(request.service());
 				// 泛化调用只要加了TraceLogger，默认开启日志输出
 				if(logConfig != null) {
